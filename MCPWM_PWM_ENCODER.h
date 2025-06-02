@@ -12,16 +12,15 @@ class MCPWM_PWM_ENCODER
 {
 
 public:
-	MCPWM_PWM_ENCODER(int pwmPinA = 17, int pwmPinB = 18, int encPinA = 15, int encPinB = 16, uint32_t pwm_freq = 21000, uint8_t pwm_resolution = 10);
+    MCPWM_PWM_ENCODER(int pwmPinA = 17, int pwmPinB = 18, int encPinA = 15, int encPinB = 16, uint32_t pwm_freq = 21000, uint8_t pwm_resolution = 10);
 	
-	void initPWM(int startAtDutyCycle);
+    void initPWM(int startAtDutyCycle);
     
     int32_t getEncCountA(bool resetAfterRead = false);
     int32_t getEncCountB(bool resetAfterRead = false);
 
     void setDutyCycle(mcpwm_cmpr_handle_t cmpr, uint32_t level);
     void setDeadTime(uint32_t red_ticks, uint32_t fed_ticks);
-    void setEncoderDebounce(uint32_t us = 100);
 
     // This is a static “thunk” that the ISR subsystem can call.
     static void IRAM_ATTR _onEncA(void* ctx);
@@ -54,13 +53,7 @@ private:
 	int    				_enc_pin_B;//     = 16;
 	volatile int32_t	_encCountA       = 0;
 	volatile int32_t	_encCountB       = 0;
-	volatile uint32_t	_lastEncATime    = 0;
-	volatile uint32_t	_lastEncBTime    = 0;
 	
-	volatile bool		_debounceEnabled = false;
-	volatile uint32_t 	_debounceUs      = 100;  // µs
-	
-
 };
 
 #endif  // _MCPWM_PWM_ENCODER_H_
