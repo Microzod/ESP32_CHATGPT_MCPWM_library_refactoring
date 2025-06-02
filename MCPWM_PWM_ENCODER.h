@@ -8,12 +8,6 @@ extern "C"
     #include "driver/mcpwm_prelude.h"
 }
 
-// save from internet to not forget:
-//void IRAM_ATTR pin_t_isr_handler(void* user_ctx)
-//{
-//	((PIN_t*)user_ctx)->isr_func();
-//}
-
 class MCPWM_PWM_ENCODER
 {
 
@@ -24,19 +18,23 @@ public:
     
     int32_t getEncCountA(bool resetAfterRead = false);
     int32_t getEncCountB(bool resetAfterRead = false);
-    
+
     void setDutyCycle(mcpwm_cmpr_handle_t cmpr, uint32_t level);
     void setDeadTime(uint32_t red_ticks, uint32_t fed_ticks);
     void setEncoderDebounce(uint32_t us = 100);
-    
-    mcpwm_cmpr_handle_t  cmprA, cmprB;
+
+    // This is a static “thunk” that the ISR subsystem can call.
+    static void IRAM_ATTR _onEncA(void* ctx);
+    static void IRAM_ATTR _onEncB(void* ctx);
+
+    // Member functions that actually get called from _onEncA/_onEncB:
+    void handleEncA();
+    void handleEncB();
 	
+    mcpwm_cmpr_handle_t  cmprA, cmprB;
 
 private:
     void setupChannel(int gpio_num, mcpwm_cmpr_handle_t &cmpr, mcpwm_gen_handle_t &gen);
-
-    static void IRAM_ATTR onEncA(void* ptr);
-    static void IRAM_ATTR onEncB(void* ptr);
     
 	int      _pwm_pin_A;		// = 17;
 	int      _pwm_pin_B;		// = 18;
@@ -50,7 +48,7 @@ private:
 
 	mcpwm_timer_handle_t _pwm_timer;
 	mcpwm_oper_handle_t  _pwm_oper;
-    mcpwm_gen_handle_t   _genA, _genB;
+        mcpwm_gen_handle_t   _genA, _genB;
 	
 	int    				_enc_pin_A;//     = 15;
 	int    				_enc_pin_B;//     = 16;
@@ -59,8 +57,8 @@ private:
 	volatile uint32_t	_lastEncATime    = 0;
 	volatile uint32_t	_lastEncBTime    = 0;
 	
-	bool				_debounceEnabled = false;
-	uint32_t 			_debounceUs      = 100;  // µs
+	volatile bool		_debounceEnabled = false;
+	volatile uint32_t 	_debounceUs      = 100;  // µs
 	
 
 };
