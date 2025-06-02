@@ -19,7 +19,7 @@ MCPWM_PWM_ENCODER::MCPWM_PWM_ENCODER(int pwmPinA, int pwmPinB, int encPinA, int 
     _pwm_period_ticks = _resolution;
 }
 
-void MCPWM_PWM_ENCODER::initPWM(int startAtDutyCycle = 0)
+void MCPWM_PWM_ENCODER::initPWM(int startAtDutyCycle)
 {
     
     // 1) MCPWM Timer
