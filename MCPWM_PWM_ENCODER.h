@@ -14,7 +14,7 @@ class MCPWM_PWM_ENCODER
 public:
     MCPWM_PWM_ENCODER(int pwmPinA = 17, int pwmPinB = 18, int encPinA = 15, int encPinB = 16, uint32_t pwm_freq = 21000, uint8_t pwm_resolution = 10);
 	
-    void initPWM(int startAtDutyCycle);
+    void initPWM(int startAtDutyCycle = 0);
     
     int32_t getEncCountA(bool resetAfterRead = false);
     int32_t getEncCountB(bool resetAfterRead = false);
@@ -49,8 +49,8 @@ private:
 	mcpwm_oper_handle_t  _pwm_oper;
         mcpwm_gen_handle_t   _genA, _genB;
 	
-	int    				_enc_pin_A;//     = 15;
-	int    				_enc_pin_B;//     = 16;
+	int    			_enc_pin_A;//     = 15;
+	int    			_enc_pin_B;//     = 16;
 	volatile int32_t	_encCountA       = 0;
 	volatile int32_t	_encCountB       = 0;
 	
