@@ -2,10 +2,10 @@
 #include <Bounce2.h>
 #include "MCPWM_PWM_ENCODER.h"
 
-//extern "C"
-//{
+extern "C"
+{
     #include "driver/mcpwm_prelude.h"
-//}
+}
 
 enum Motor     { MOTOR_A = 0, MOTOR_B = 1 };
 enum Direction { STOP    = 0, FORWARD = 1, BACKWARD = 2 };
@@ -40,24 +40,19 @@ static const int      quadrature_vcc_pin       = 8;
 static const int      quadrature_button_pin    = 7;
 static const int      rgb_pin                  = 21;
 
-MCPWM_PWM_ENCODER pwm(17, 18, 15, 16, 21000, 10);
+static const int      pwm_pin_A        = 17;
+static const int      pwm_pin_B        = 18;
+static const int      enc_pin_A        = 15;
+static const int      enc_pin_B        = 16;
+static const uint32_t pwm_hertz        = 21000;
+static const uint8_t  numberOfBits     = 10;
+
+MCPWM_PWM_ENCODER pwm(pwm_pin_A, pwm_pin_B, enc_pin_A, enc_pin_B, pwm_hertz, numberOfBits);
 RotaryEncoderPCNT encoder(quadrature_encoder_pin_A, quadrature_encoder_pin_B);// Constructor args are: pinA/Clock, pinB/Data, start position(defaults=0), glitch filter time in ns(defaults=1000).
 Bounce2::Button button = Bounce2::Button();
 
-static bool isRunning   = 0;
-static bool isInForward = 0;
-static bool zeroWasCalled = 0;
 int         oldPosition;
 int         position;
-
-
-// ===== Debounce settings =====
-static bool          debounceEnabled  = true;
-static const uint32_t debounceUs      = 100;  // µs
-volatile uint32_t    lastEncATime     = 0;
-volatile uint32_t    lastEncBTime     = 0;
-
-
 
 // —— L298 helpers ——
 void setMotorDirection(uint8_t motor, uint8_t direction)
@@ -153,7 +148,4 @@ void loop()
         printf("encoder value = %d \n", position);
         oldPosition = position;
     }
-    
-
-   
 }
